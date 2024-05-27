@@ -118,10 +118,10 @@ const Statistics = (props) => {
 
 const Points = props => {
   console.log('Points props value is', props)
-  const {text, value} = props;
+  const {value} = props;
   return (
     <div>
-      has {value} points
+      has {value} votes
     </div>
   )
 }
@@ -132,7 +132,6 @@ const App = () => {
   const [bad, setBad] = useState(0)
   const [allStats, setStats] = useState([])
   const [selected, setSelected] = useState(0)
-
   const header = 'give feedback'
   
   const subheader = 'statistics'
@@ -146,12 +145,8 @@ const App = () => {
     'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.',
     'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when dianosing patients.',
     'The only way to go fast, is to go well.'
-  ]
-
-  const points = { 0: 1, 1: 3, 2: 4, 3: 2 }
-
-  const pointsCopy = { ...points } // kasvatetaan olion kentän 2 arvoa yhdellä
-    pointsCopy[selected] += 1         
+  ]       
+  const [points, setPoints] = useState(Array(anecdotes.length).fill(0)) // an element for each anecdote, each initialized to value 0 
 
   const handlegoodClick = () => {
     setStats(allStats.concat('good'))
@@ -176,7 +171,9 @@ const App = () => {
   }
 
   const handlepointsClick = () => {
-    setSelected(pointsCopy)
+    const pointscopy =  [...points]
+    pointscopy[selected] += 1
+    setPoints(pointscopy)
   }
 
   return (
@@ -188,7 +185,7 @@ const App = () => {
       <SubHeader subheader ={subheader} />
       <Statistics good={good} neutral={neutral} bad={bad} allStats={allStats} StatisticLine={StatisticLine} />
       {anecdotes[selected]}
-      <Points handlepointsClick={handlepointsClick}/>
+      <Points handlepointsClick={handlepointsClick} value = {points[selected]}/>
         <p>
           <Button handleClick={handlepointsClick} text="vote" />
           <Button handleClick={handleanecdoteClick} text="next anecdote" />
