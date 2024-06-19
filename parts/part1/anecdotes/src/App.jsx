@@ -126,15 +126,38 @@ const Points = props => {
   )
 }
 
+const Anecdotes = (props) => {
+  console.log('Anecdotes props value is', props)  
+  const { mostVoted, value } = props;
+
+  if (value == 0) {
+    return(
+    <div>
+      No votes given
+      </div>
+    )
+  }
+  return (
+    <div>
+      {mostVoted} has {value} votes
+    </div>
+  )
+}
+
 const App = () => {
   const [good, setGood] = useState(0);
   const [neutral, setNeutral] = useState(0)
   const [bad, setBad] = useState(0)
   const [allStats, setStats] = useState([])
   const [selected, setSelected] = useState(0)
+
   const header = 'give feedback'
   
-  const subheader = 'statistics'
+  const subheader1 = 'statistics'
+
+  const subheader2 = 'Anecdote of the day'
+
+  const subheader3 = 'Anecdote with most votes'
 
   const anecdotes = [
     'If it hurts, do it more often.',
@@ -146,7 +169,10 @@ const App = () => {
     'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when dianosing patients.',
     'The only way to go fast, is to go well.'
   ]       
-  const [points, setPoints] = useState(Array(anecdotes.length).fill(0)) // an element for each anecdote, each initialized to value 0 
+  const [points, setPoints] = useState(Array(anecdotes.length).fill(0)) // an element for each anecdote, each initialized to value 0
+
+  const maxPoints = Math.max(...points)
+  const mostVoted = anecdotes[points.indexOf(maxPoints)]
 
   const handlegoodClick = () => {
     setStats(allStats.concat('good'))
@@ -182,14 +208,18 @@ const App = () => {
       <Button handleClick={handlegoodClick} text="good" />
       <Button handleClick={handleneutralClick} text="neutral" />
       <Button handleClick={handlebadClick} text="bad" />
-      <SubHeader subheader ={subheader} />
+      <SubHeader subheader={subheader1} />
       <Statistics good={good} neutral={neutral} bad={bad} allStats={allStats} StatisticLine={StatisticLine} />
+      <SubHeader subheader={subheader2}/>
       {anecdotes[selected]}
       <Points handlepointsClick={handlepointsClick} value = {points[selected]}/>
         <p>
           <Button handleClick={handlepointsClick} text="vote" />
           <Button handleClick={handleanecdoteClick} text="next anecdote" />
         </p>
+      <SubHeader subheader={subheader3}/>
+      <Anecdotes mostVoted={mostVoted} />
+      <Anecdotes value={maxPoints} />
     </div>
   );
 };
