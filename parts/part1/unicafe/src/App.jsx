@@ -13,22 +13,18 @@ const Button = (props) => {
 const Header = (props) => {
   console.log('Header props value is', props)
   return (
-    <div>
       <h1>
         {props.header}
       </h1>
-    </div>
   )
 }
 
 const SubHeader = (props) => {
   console.log('Subheder props value is', props)
   return (
-    <div>
       <h2>
         {props.subheader}
       </h2>
-    </div>
   )
 }
 
@@ -48,9 +44,9 @@ const Statistics = (props) => {
 
   if (allClicks == 0) {
     return(
-    <div>
+    <p>
       No feedback given
-      </div>
+      </p>
     )
   }
 

@@ -13,106 +13,9 @@ const Button = (props) => {
 const Header = (props) => {
   console.log('Header props value is', props)
   return (
-    <div>
       <h1>
         {props.header}
       </h1>
-    </div>
-  )
-}
-
-const SubHeader = (props) => {
-  console.log('Subheder props value is', props)
-  return (
-    <div>
-      <h2>
-        {props.subheader}
-      </h2>
-    </div>
-  )
-}
-
-const StatisticLine = (props) => { 
-  console.log('Statisticline props value is', props)
-  const { text, value } = props;
-  return (
-    <div>
-      {text} {value}
-    </div>
-  )
-}
-
-const Statistics = (props) => {
-  console.log('Statistics props value is', props)  
-  const {good, neutral, bad, allStats, StatisticLine} = props;
-
-  if (allStats == 0) {
-    return(
-    <div>
-      No feedback given
-      </div>
-    )
-  }
-
-  const total = good + neutral + bad;
-  const average = total === 0 ? 0 : (good - bad) / total;
-  const positive = total === 0 ? 0 : (good * 100) / total;
-  
-  return (
-    <div>
-      <table>
-        <tbody>
-          <tr>
-            <td> 
-              <StatisticLine text="good" />
-            </td>
-            <td>
-              {good}
-            </td>
-          </tr>
-          <tr>
-            <td> 
-              <StatisticLine text="neutral" />
-            </td>
-            <td>
-              {neutral}
-            </td>
-          </tr>
-          <tr>
-            <td> 
-              <StatisticLine text="bad" />
-            </td>
-            <td>
-              {bad}
-            </td>
-          </tr>
-          <tr>
-            <td> 
-              <StatisticLine text="total" />
-            </td>
-            <td>
-              {total}
-            </td>
-          </tr>
-          <tr>
-            <td> 
-              <StatisticLine text="average" />
-            </td>
-            <td>
-              {average}
-            </td>
-          </tr>
-          <tr>
-            <td> 
-              <StatisticLine text="positive" />
-            </td>
-            <td>
-              {positive + ' %'}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
   )
 }
 
@@ -120,44 +23,40 @@ const Points = props => {
   console.log('Points props value is', props)
   const {value} = props;
   return (
-    <div>
+    <p>
       has {value} votes
-    </div>
+    </p>
   )
 }
 
 const Anecdotes = (props) => {
   console.log('Anecdotes props value is', props)  
-  const { mostVoted, value } = props;
+  const { mostVoted, maxPoints } = props;
 
-  if (value == 0) {
+  if (maxPoints == 0) {
     return(
-    <div>
+    <p>
       No votes given
-      </div>
+      </p>
     )
   }
   return (
     <div>
-      {mostVoted} has {value} votes
+      <p>
+        {mostVoted}
+      </p>
+      <p>
+        has {maxPoints} votes
+      </p>
     </div>
   )
 }
 
 const App = () => {
-  const [good, setGood] = useState(0);
-  const [neutral, setNeutral] = useState(0)
-  const [bad, setBad] = useState(0)
-  const [allStats, setStats] = useState([])
   const [selected, setSelected] = useState(0)
 
-  const header = 'give feedback'
-  
-  const subheader1 = 'statistics'
-
-  const subheader2 = 'Anecdote of the day'
-
-  const subheader3 = 'Anecdote with most votes'
+  const header1 = 'Anecdote of the day'
+  const header2 = 'Anecdote with most votes'
 
   const anecdotes = [
     'If it hurts, do it more often.',
@@ -168,29 +67,11 @@ const App = () => {
     'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.',
     'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when dianosing patients.',
     'The only way to go fast, is to go well.'
-  ]       
-  const [points, setPoints] = useState(Array(anecdotes.length).fill(0)) // an element for each anecdote, each initialized to value 0
+  ]   
 
+  const [points, setPoints] = useState(Array(anecdotes.length).fill(0)) // an element for each anecdote, each initialized to value 0
   const maxPoints = Math.max(...points)
   const mostVoted = anecdotes[points.indexOf(maxPoints)]
-
-  const handlegoodClick = () => {
-    setStats(allStats.concat('good'))
-    const updatedGood = good + 1
-    setGood(updatedGood)
-  };
-
-  const handleneutralClick = () => {
-    setStats(allStats.concat('neutral'))
-    const updatedNeutral = neutral + 1
-    setNeutral(updatedNeutral)
-  };
-
-  const handlebadClick = () => {
-    setStats(allStats.concat('bad'))
-    const updatedBad = bad + 1
-    setBad(updatedBad)   
-  };
 
   const handleanecdoteClick = () => {
     setSelected(Math.floor(Math.random() * anecdotes.length))
@@ -204,22 +85,15 @@ const App = () => {
 
   return (
     <div>
-      <Header header ={header} />
-      <Button handleClick={handlegoodClick} text="good" />
-      <Button handleClick={handleneutralClick} text="neutral" />
-      <Button handleClick={handlebadClick} text="bad" />
-      <SubHeader subheader={subheader1} />
-      <Statistics good={good} neutral={neutral} bad={bad} allStats={allStats} StatisticLine={StatisticLine} />
-      <SubHeader subheader={subheader2}/>
+      <Header header ={header1} />
       {anecdotes[selected]}
-      <Points handlepointsClick={handlepointsClick} value = {points[selected]}/>
+      <Points value = {points[selected]}/>
         <p>
           <Button handleClick={handlepointsClick} text="vote" />
           <Button handleClick={handleanecdoteClick} text="next anecdote" />
         </p>
-      <SubHeader subheader={subheader3}/>
-      <Anecdotes mostVoted={mostVoted} />
-      <Anecdotes value={maxPoints} />
+      <Header header ={header2} />
+      <Anecdotes mostVoted={mostVoted} maxPoints={maxPoints}/>
     </div>
   );
 };
