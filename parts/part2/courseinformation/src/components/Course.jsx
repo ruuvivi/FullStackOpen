@@ -24,8 +24,9 @@ const Content = (props) => {
   return (
       <div>
         {props.parts.map(part => (
-          < Part key={part.id} name = {part.name} exercise = {part.exercises} />
+          < Part key = {part.id} name = {part.name} exercise = {part.exercises} />
         ))}
+        < Total total = {props.parts} />
       </div>
     )
 }
@@ -38,6 +39,16 @@ const Part = (props) => {
         {name} {exercise}
       </p>
     )
+}
+
+const Total = (props) => {
+  console.log('Total props value is', props)
+  const total = props.total.reduce((total, part) => total + part.exercises, 0)
+  return (
+      <p>
+        total of {total} exercises
+      </p>
+  )
 }
 
 export default Course;
