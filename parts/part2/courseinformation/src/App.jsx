@@ -21,7 +21,22 @@ const App = () => {
     ]
   }
 
-  return <Course course={course} />
+  return (
+    <div>
+     <Course course={course} />
+  </div> 
+  )
+}
+
+const Course = (props) => {
+  console.log('Course props value is', props)
+  return (
+      <h1>
+        {course.map(note => 
+          <Note key={course.name} note={note} />
+        )}
+      </h1>
+  )
 }
 
 export default App
