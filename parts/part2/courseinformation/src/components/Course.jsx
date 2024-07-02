@@ -6,6 +6,7 @@ const Course = (props) => {
     <div>
       <Header courseName = {props.course.name} />
       <Content parts = {props.course.parts} />
+      <Total total = {props.course.parts} />
     </div>
   )
 }
@@ -26,7 +27,6 @@ const Content = (props) => {
         {props.parts.map(part => (
           < Part key = {part.id} name = {part.name} exercise = {part.exercises} />
         ))}
-        < Total total = {props.parts} />
       </div>
     )
 }
