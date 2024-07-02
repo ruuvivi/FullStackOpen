@@ -1,3 +1,6 @@
+import React from 'react';
+import Course from './components/Course'
+
 const App = () => {
   const course = {
     id: 1,
@@ -25,17 +28,6 @@ const App = () => {
     <div>
      <Course course={course} />
   </div> 
-  )
-}
-
-const Course = (props) => {
-  console.log('Course props value is', props)
-  return (
-      <h1>
-        {course.map(note => 
-          <Note key={course.name} note={note} />
-        )}
-      </h1>
   )
 }
 
