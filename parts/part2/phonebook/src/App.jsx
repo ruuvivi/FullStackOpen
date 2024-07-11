@@ -1,5 +1,11 @@
 import { useState } from 'react'
 
+const Person = ({ person }) => {
+  return (
+    <p>{person.name}</p>
+  )
+}
+
 const App = () => {
   const [persons, setPersons] = useState([
     { name: 'Arto Hellas' }
@@ -9,14 +15,15 @@ const App = () => {
   const addName = (event) => {
     event.preventDefault()
     const noteObject = {
-      content: newName
+      name: newName
     }
+    setPersons(persons.concat(noteObject))
     setNewName('')
     console.log('button clicked', event.target)
   }
 
-  const handleNoteChange = (event) => {
-    console.log(event.target.value)
+  const handleNameChange = (event) => {
+    console.log('event target value', event.target.value)
     setNewName(event.target.value)
   }
 
@@ -27,17 +34,21 @@ const App = () => {
         <div>
           name:
         </div>
-        <input value={newName}
-        onChange={handleNoteChange}
+        <input
+        value={newName}
+        onChange={handleNameChange}
         />
         <div>
-          <button type="submit">add</button> 
-          <>input value = {newName}</>
+          <button type="submit">add</button>
         </div>
       </form>
       <div>debug: {newName}</div>
       <h2>Numbers</h2>
-      ...
+      <p>
+        {persons.map((person, index) =>
+          <Person key={index} person={person} />
+        )}
+      </p>
     </div>
   )
 }
