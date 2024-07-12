@@ -17,9 +17,17 @@ const App = () => {
     const noteObject = {
       name: newName
     }
-    setPersons(persons.concat(noteObject))
-    setNewName('')
-    console.log('button clicked', event.target)
+
+    if (persons.find(existing => existing.name === newName)) {
+      alert(newName + ' is already added to phonebook')
+      setNewName('')
+    }
+    else {
+      setPersons(persons.concat(noteObject))
+      setNewName('')
+      console.log('button clicked', event.target)
+  
+    }
   }
 
   const handleNameChange = (event) => {
@@ -44,11 +52,11 @@ const App = () => {
       </form>
       <div>debug: {newName}</div>
       <h2>Numbers</h2>
-      <p>
+      <div>
         {persons.map((person, index) =>
           <Person key={index} person={person} />
         )}
-      </p>
+      </div>
     </div>
   )
 }
