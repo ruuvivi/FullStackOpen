@@ -10,11 +10,14 @@ const Person = ({ name, number }) => {
 
 const App = () => {
   const [persons, setPersons] = useState([
-    { name: '', number: '', id: ''}
+    { name: 'Arto Hellas', number: '040-123456', id: 1 },
+    { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
+    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
+    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
   ]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
-  const [showFound, setShowFound] = useState(true)
+  const [showFound, setShowFound] = useState('')
 
   const addPerson = (event) => {
     event.preventDefault()
@@ -22,28 +25,24 @@ const App = () => {
       name: newName,
       number: newNumber,
       id: persons.length + 1,
-      findName: showFound
     }
 
-    if (persons.find(existing => existing.name === newName)) {
+    if (persons.find(existing => existing.name === newName) && !foundPersonstoShow) {
       alert(newName + ' is already added to phonebook')
-      setNewName('')
-      setNewNumber('')
-      setShowFound('')
     }
     else {
       setPersons(persons.concat(personObject))
-      setNewName('')
-      setNewNumber('')
-      setShowFound('')
-      console.log('button clicked', event.target)
   
     }
+    console.log('button clicked', event.target)
+    setNewName('')
+    setNewNumber('')
+    setShowFound('')
   }
 
-  const foundNamestoShow = showFound
-  ? persons
-  : persons.filter(found => found.name.toLowerCase().includes(showFound.toLowerCase()))
+  const foundPersonstoShow = showFound
+  ? persons.filter(found => found.name.toLowerCase().includes(showFound.toLowerCase()))
+  : persons
 
   const handleNameChange = (event) => {
     console.log('newName', event.target.value)
@@ -89,7 +88,7 @@ const App = () => {
         <div>debug: {newName} {newNumber}</div>
         <h2>Numbers</h2>
         <div>
-        {showFound ? foundNamestoShow : persons.map((person, index) => <Person key={index} name={person.name} number={person.number}/>) }
+          {foundPersonstoShow.map((person, index) => <Person key={index} name={person.name} number={person.number}/>) }
         </div>
     </div>
   )
