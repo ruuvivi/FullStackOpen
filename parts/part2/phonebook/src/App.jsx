@@ -8,6 +8,19 @@ const Person = ({ name, number }) => {
   )
 }
 
+const Filter = ({showFound, persons}) => {
+  const foundPersonstoShow = showFound
+  ? persons.filter(found => found.name.toLowerCase().includes(showFound.toLowerCase()))
+  : persons
+  return (
+    <>
+      {foundPersonstoShow.map((person) => (
+        <Person key={person.id} name={person.name} number={person.number} />
+      ))}
+    </>
+  )
+}
+
 const App = () => {
   const [persons, setPersons] = useState([
     { name: 'Arto Hellas', number: '040-123456', id: 1 },
@@ -40,10 +53,6 @@ const App = () => {
     setShowFound('')
   }
 
-  const foundPersonstoShow = showFound
-  ? persons.filter(found => found.name.toLowerCase().includes(showFound.toLowerCase()))
-  : persons
-
   const handleNameChange = (event) => {
     console.log('newName', event.target.value)
     setNewName(event.target.value)
@@ -65,10 +74,13 @@ const App = () => {
       <form onSubmit={addPerson} >
       <div>filter shown with
           <input
-            value={showFound}
-            onChange={handleFoundChange}
+          value={showFound}
+          onChange={handleFoundChange}
           />
           </div>
+      <h3>
+        Add a new
+      </h3>
         <div>name:
           <input
             value={newName}
@@ -88,7 +100,7 @@ const App = () => {
         <div>debug: {newName} {newNumber}</div>
         <h2>Numbers</h2>
         <div>
-          {foundPersonstoShow.map((person, index) => <Person key={index} name={person.name} number={person.number}/>) }
+          <Filter showFound={showFound} persons={persons}/>
         </div>
     </div>
   )
