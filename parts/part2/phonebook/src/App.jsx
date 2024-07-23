@@ -3,6 +3,7 @@ import axios from 'axios'
 import Persons from './components/Persons'
 import PersonForm from './components/PersonForm'
 import Filter from './components/Filter'
+import personService from './services/persons'
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -11,10 +12,10 @@ const App = () => {
   const [showFound, setShowFound] = useState('');
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data)
+    personService
+      .getAll()
+      .then(initialPersons => {
+        setPersons(initialPersons)
       })
   }, [])
 
@@ -31,9 +32,32 @@ const App = () => {
     } else {
       setPersons(persons.concat(personObject));
     }
-    setNewName('');
-    setNewNumber('');
+    personService
+      .create(personObject)
+      .then(returnedPerson => {
+        setPersons(persons.concat(returnedPerson))
+        setNewName('')
+        setNewNumber('');
+        console.log('new person',personObject)
+      })
   };
+
+  const personsToShow = showFound
+    ? persons.filter((person) =>
+        person.name.toLowerCase().includes(showFound.toLowerCase())
+      )
+    : persons;
+
+  const deletePerson = (id) => {
+    const url = `http://localhost:3001/persons/${id}`
+    const person = persons.find(p => p.id === id)
+    const deletedPerson = { ...person, name: !person.name }
+    if (window.confirm(`Delete ${person.name}?`)) {
+      axios.delete(url, deletedPerson).then(response => {
+        setPersons(persons.map(p => p.id !== id ? p : response.data))
+      })
+    }
+  }
 
   const handleNameChange = (event) => {
     setNewName(event.target.value);
@@ -46,12 +70,6 @@ const App = () => {
   const handleFoundChange = (event) => {
     setShowFound(event.target.value);
   };
-
-  const personsToShow = showFound
-    ? persons.filter((person) =>
-        person.name.toLowerCase().includes(showFound.toLowerCase())
-      )
-    : persons;
 
   return (
     <div>
@@ -66,7 +84,10 @@ const App = () => {
         handleNumberChange={handleNumberChange}
       />
       <h3>Numbers</h3>
-      <Persons personsToShow={personsToShow} />
+      <Persons
+      personsToShow={personsToShow}
+      deletePerson={deletePerson}
+      />
     </div>
   );
 };
