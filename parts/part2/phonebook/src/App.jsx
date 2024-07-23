@@ -29,10 +29,12 @@ const App = () => {
 
     if (persons.some((existing) => existing.name === newName)) {
       alert(`${newName} is already added to phonebook`);
+      setNewName('')
+      setNewNumber('');
     } else {
       setPersons(persons.concat(personObject));
-    }
-    personService
+
+      personService
       .create(personObject)
       .then(returnedPerson => {
         setPersons(persons.concat(returnedPerson))
@@ -40,6 +42,7 @@ const App = () => {
         setNewNumber('');
         console.log('new person',personObject)
       })
+    }
   };
 
   const personsToShow = showFound
@@ -51,11 +54,27 @@ const App = () => {
   const deletePerson = (id) => {
     const url = `http://localhost:3001/persons/${id}`
     const person = persons.find(p => p.id === id)
-    const deletedPerson = { ...person, name: !person.name }
-    if (window.confirm(`Delete ${person.name}?`)) {
-      axios.delete(url, deletedPerson).then(response => {
-        setPersons(persons.map(p => p.id !== id ? p : response.data))
+    const deletedPerson = { ...person }
+    if (window.confirm(`Delete ${deletedPerson.name}?`)) {
+
+      axios.delete(url)
+        .then(() => {
+          setPersons(persons.filter(p => p.id !== id));
+        })
+        .catch(error => {
+          alert(
+            `the person '${person.name}' was already deleted from server`
+          )
+          setPersons(persons.filter(p => p.id !== id))
+        })
+          // poiston jälkeen ilmoittaa että on muka jo poistettu, ja person poistuu nettisivulta mutta jää vielä serveriin... 
+
+     /* personService
+      .update(id, deletedPerson)
+      .then(returnedPerson => {
+        setPersons(persons.map(person => person.id !== id ? person : returnedPerson))
       })
+        */
     }
   }
 
