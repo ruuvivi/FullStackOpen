@@ -24,16 +24,13 @@ const App = () => {
     const personObject = {
       name: newName,
       number: newNumber,
-      id: persons.length + 1,
     };
 
-    if (persons.some((existing) => existing.name === newName)) {
+    if (persons.some(existing => existing.name === newName)) {
       alert(`${newName} is already added to phonebook`);
       setNewName('')
       setNewNumber('');
     } else {
-      setPersons(persons.concat(personObject));
-
       personService
       .create(personObject)
       .then(returnedPerson => {
@@ -51,31 +48,21 @@ const App = () => {
       )
     : persons;
 
-  const deletePerson = (id) => {
-    const url = `http://localhost:3001/persons/${id}`
-    const person = persons.find(p => p.id === id)
-    const deletedPerson = { ...person }
-    if (window.confirm(`Delete ${deletedPerson.name}?`)) {
-
-      axios.delete(url)
-        .then(() => {
-          setPersons(persons.filter(p => p.id !== id));
-        })
-        .catch(error => {
-          alert(
-            `the person '${person.name}' was already deleted from server`
-          )
-          setPersons(persons.filter(p => p.id !== id))
-        })
-          // poiston jälkeen ilmoittaa että on muka jo poistettu, ja person poistuu nettisivulta mutta jää vielä serveriin... 
-
-     /* personService
-      .update(id, deletedPerson)
-      .then(returnedPerson => {
-        setPersons(persons.map(person => person.id !== id ? person : returnedPerson))
-      })
-        */
-    }
+    const deletePerson = id => {
+      const person = persons.find(p => p.id === id)
+      const deletedPerson = { ... person}
+      if (window.confirm(`Delete ${deletedPerson.name}?`)) {
+        personService
+          .remove(id)
+          .then(() => {
+            setPersons(persons.filter(p => p.id !== id))
+          })
+          .catch(error => {
+            console.log(error)
+            alert(`the person '${deletedPerson.name}' was already deleted from server`)
+            setPersons(persons.filter(p => p.id !== id))
+          })
+        }
   }
 
   const handleNameChange = (event) => {
