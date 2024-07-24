@@ -1,6 +1,6 @@
 import Person from './Person'
 
-const Persons = ({ personsToShow, deletePerson }) => {
+const Persons = ({ personsToShow, deletePerson}) => {
     return (
       <>
         {personsToShow.map((person) => (

@@ -1,4 +1,4 @@
-const Person = ({ name, number, deletePerson}) => {
+const Person = ({ name, number, deletePerson }) => {
     return (
       <p>
         {name} {number}

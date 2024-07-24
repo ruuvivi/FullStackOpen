@@ -27,7 +27,7 @@ const App = () => {
     };
 
     if (persons.some(existing => existing.name === newName)) {
-      alert(`${newName} is already added to phonebook`);
+      changeNumber(personObject)
       setNewName('')
       setNewNumber('');
     } else {
@@ -48,23 +48,40 @@ const App = () => {
       )
     : persons;
 
-    const deletePerson = id => {
-      const person = persons.find(p => p.id === id)
-      const deletedPerson = { ... person}
-      if (window.confirm(`Delete ${deletedPerson.name}?`)) {
-        personService
-          .remove(id)
-          .then(() => {
-            setPersons(persons.filter(p => p.id !== id))
-          })
-          .catch(error => {
-            console.log(error)
-            alert(`the person '${deletedPerson.name}' was already deleted from server`)
-            setPersons(persons.filter(p => p.id !== id))
-          })
-        }
+  const deletePerson = id => {
+    const person = persons.find(p => p.id === id)
+    const deletedPerson = { ... person}
+    if (window.confirm(`Delete ${deletedPerson.name}?`)) {
+      personService
+        .remove(id, deletedPerson)
+        .then(() => {
+          setPersons(persons.filter(p => p.id !== id))
+        })
+        .catch(error => {
+          console.log(error)
+          alert(`the person '${deletedPerson.name}' was already deleted from server`)
+          setPersons(persons.filter(p => p.id !== id))
+        })
+      }
   }
 
+  const changeNumber = number => {
+    const person = persons.find(p => p.id === number)
+    const changedNumber = { ... person}
+    if (window.confirm(`${changedNumber.name} is already added to phonebook, replace the old number with a new one?`)) {
+      personService
+        .update(number, changedNumber)
+        .then(() => {
+          setPersons(persons.filter(n => n.number !== number))
+      })
+    .catch(error => {
+      console.log(error)
+      alert(`the number of '${changedNumber.name}' was already changed in server`)
+      setPersons(persons.filter(p => p.id !== id))
+    })
+  }
+}
+   
   const handleNameChange = (event) => {
     setNewName(event.target.value);
   };
@@ -93,6 +110,7 @@ const App = () => {
       <Persons
       personsToShow={personsToShow}
       deletePerson={deletePerson}
+      changeNumber={changeNumber}
       />
     </div>
   );
