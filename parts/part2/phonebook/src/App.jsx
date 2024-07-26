@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import Persons from './components/Persons'
 import PersonForm from './components/PersonForm'
 import Filter from './components/Filter'
@@ -26,7 +25,7 @@ const App = () => {
       number: newNumber,
     };
 
-    if (persons.some(existing => existing.name === newName)) {
+    if (persons.some(existing => existing.name.toLowerCase() === newName.toLocaleLowerCase())) {
       changeNumber(personObject)
       setNewName('')
       setNewNumber('');
@@ -37,7 +36,7 @@ const App = () => {
         setPersons(persons.concat(returnedPerson))
         setNewName('')
         setNewNumber('');
-        console.log('new person',personObject)
+        console.log('new person', personObject)
       })
     }
   };
@@ -49,13 +48,14 @@ const App = () => {
     : persons;
 
   const deletePerson = id => {
-    const person = persons.find(p => p.id === id)
+    const person = persons.find(p => p.id.toLocaleLowerCase() === id.toLocaleLowerCase())
     const deletedPerson = { ... person}
     if (window.confirm(`Delete ${deletedPerson.name}?`)) {
       personService
         .remove(id, deletedPerson)
         .then(() => {
           setPersons(persons.filter(p => p.id !== id))
+          console.log('Deleted person ', deletedPerson.name)
         })
         .catch(error => {
           console.log(error)
@@ -65,20 +65,22 @@ const App = () => {
       }
   }
 
-  const changeNumber = number => {
-    const person = persons.find(p => p.id === number)
-    const changedNumber = { ... person}
-    if (window.confirm(`${changedNumber.name} is already added to phonebook, replace the old number with a new one?`)) {
-      personService
-        .update(number, changedNumber)
-        .then(() => {
-          setPersons(persons.filter(n => n.number !== number))
+  const changeNumber = personObject => {
+    const person = persons.find(p => p.name.toLocaleLowerCase() === personObject.name.toLocaleLowerCase())
+    const changedNumber = { ... person, number: personObject.number}
+    if (changedNumber) {
+      if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+        personService
+          .update(changedNumber.id, changedNumber)
+          .then(returnedPerson => {
+            setPersons(persons.map(p => p.id !== changedNumber.id ? p : returnedPerson))
+            console.log('changed numbe of ', personObject)
+        })
+      .catch(error => {
+        console.log(error)
+        alert(`The number of '${personObject.name}' could not be changed on the server`);
       })
-    .catch(error => {
-      console.log(error)
-      alert(`the number of '${changedNumber.name}' was already changed in server`)
-      setPersons(persons.filter(p => p.id !== id))
-    })
+    }
   }
 }
    
