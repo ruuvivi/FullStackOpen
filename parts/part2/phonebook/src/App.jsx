@@ -28,14 +28,8 @@ const App = () => {
     };
     if (persons.some(existing => existing.name.toLowerCase() === newName.toLocaleLowerCase())) {
       changeNumber(personObject)
-      .then(returnedPerson => {
         setNewName('');
         setNewNumber('');
-        setNotificationMessage(`Changed number of ${returnedPerson.name}`)
-        setTimeout(() => {
-          setNotificationMessage(null);
-        }, 5000);
-      })
     } else {
       personService
       .create(personObject)
@@ -86,7 +80,11 @@ const App = () => {
           .then(returnedPerson => {
             setPersons(persons.map(p => p.id !== changedNumber.id ? p : returnedPerson))
             console.log('changed numbe of ', personObject)
-        })
+            setNotificationMessage(`Changed number of ${returnedPerson.name}`)
+            setTimeout(() => {
+              setNotificationMessage(null);
+            }, 5000);
+            })
       .catch(error => {
         console.log(error)
         alert(`The number of '${personObject.name}' could not be changed on the server`);
