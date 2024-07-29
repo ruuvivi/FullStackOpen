@@ -3,12 +3,14 @@ import Persons from './components/Persons'
 import PersonForm from './components/PersonForm'
 import Filter from './components/Filter'
 import personService from './services/persons'
+import Notification from './components/Notification'
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
   const [showFound, setShowFound] = useState('');
+  const [notificationMessage, setNotificationMessage] = useState('')
 
   useEffect(() => {
     personService
@@ -24,11 +26,16 @@ const App = () => {
       name: newName,
       number: newNumber,
     };
-
     if (persons.some(existing => existing.name.toLowerCase() === newName.toLocaleLowerCase())) {
       changeNumber(personObject)
-      setNewName('')
-      setNewNumber('');
+      .then(returnedPerson => {
+        setNewName('');
+        setNewNumber('');
+        setNotificationMessage(`Changed number of ${returnedPerson.name}`)
+        setTimeout(() => {
+          setNotificationMessage(null);
+        }, 5000);
+      })
     } else {
       personService
       .create(personObject)
@@ -37,6 +44,10 @@ const App = () => {
         setNewName('')
         setNewNumber('');
         console.log('new person', personObject)
+        setNotificationMessage(`Added ${returnedPerson.name}`);
+        setTimeout(() => {
+          setNotificationMessage(null);
+        }, 5000);
       })
     }
   };
@@ -99,6 +110,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={notificationMessage} />
       <Filter showFound={showFound} handleFoundChange={handleFoundChange} />
       <h3>Add a new</h3>
       <PersonForm
