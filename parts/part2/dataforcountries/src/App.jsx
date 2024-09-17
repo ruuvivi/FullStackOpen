@@ -27,10 +27,10 @@ const App = () => {
     setValue(event.target.value)
   }
 
-const onSearch = (event) => {
-    event.preventDefault()
-    setCountriesFiltered(value)
-  }
+  const onSearch = (event) => {
+      event.preventDefault()
+      setCountriesFiltered(value)
+    }
 
   const queryList = () => {
     if (filteredCountries.length > 10) {
@@ -40,14 +40,12 @@ const onSearch = (event) => {
     }
     else if (filteredCountries.length > 1) {
       return (
-      <ul>
+        <div>
           {filteredCountries.map(country => (
-            <li key={country.name.common}>
-              {country.name.common}
-            </li>
+            <ul>{country.name.common}</ul>
           ))}
-        </ul>
-      )  
+          </div>
+      )
   } else if (filteredCountries.length === 1) {
     const country = filteredCountries[0]
     return (
@@ -57,7 +55,9 @@ const onSearch = (event) => {
           <p>area {country.area} km²</p>
           <h3>languages:</h3>
           <li>
-            {Object.values(country.languages).join()}
+            {Object.values(country.languages).map((language, index) => (
+              <li key={index}>{language}</li>
+            ))}
           </li>
           <img
             src={country.flags.svg}
