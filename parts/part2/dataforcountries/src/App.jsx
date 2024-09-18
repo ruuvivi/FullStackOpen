@@ -16,10 +16,24 @@ const App = () => {
   const [information, setInformation] = useState([])
   const [filteredCountries, setFilteredCountries] = useState([])
   const [selectedCountry, setSelectedCountry] = useState(null)
+  const [weather, setWeather] = useState(null)
+
+  const api_key = '1b27a873b18ac891e1aed48b5cae4d4f'
 
   const handleClick = (country) => {
     setSelectedCountry(country);
+    fetchWeather(country.capital);
   };
+
+  const fetchWeather = (capital) => {
+    if (capital) {
+      axios
+        .get(`https://api.openweathermap.org/data/2.5/weather?q=${capital}&units=metric&appid=${api_key}`)
+        .then(response => {
+          setWeather(response.data);
+        })
+  };
+}
 
   useEffect(() => {
     if (value) {
@@ -39,12 +53,13 @@ const App = () => {
   const handleChange = (event) => {
     setValue(event.target.value)
     setSelectedCountry(null); // Clear the information when input changes
+    setWeather(null);
   }
 
   const onSearch = (event) => {
     event.preventDefault();
-    setCountriesFiltered(value)
     setSelectedCountry(null);
+    setWeather(null);
   }
 
   const queryList = () => {
@@ -63,7 +78,6 @@ const App = () => {
         </div>
       )
     } else if (filteredCountries.length === 1) {
-      // Directly show the single country's details
       const country = filteredCountries[0];
       return showselectedCountry(country);
     }
@@ -84,14 +98,25 @@ const App = () => {
         <img
           src={country.flags.svg}
           style={{ width: '200px', height: '200px' }}
-          alt={`Flag of ${country.name.common}`}
         />
+        <div>
+        {weather && (
+          <div>
+            <h3>weather in {country.capital}</h3>
+            <p>temperature {weather.main.temp} °C</p>
+            <p> {weather.weather[0].description}</p>
+            <p>wind {weather.wind.speed} m/s</p>
+            <img
+              src={`http://openweathermap.org/img/wn/${weather.weather[0].icon}.png`}
+            />
+          </div>
+        )}
+        </div>
       </div>
     );
   }
 
   useEffect(() => {
-    // Filter countries based on the search input
     setFilteredCountries(
       information.filter(country =>
         country.name.common.toLowerCase().includes(value.toLowerCase())
@@ -105,7 +130,6 @@ const App = () => {
         find countries <input value={value} onChange={handleChange} />
       </form>
       {queryList()}
-      {/* Show selected country details if a country is selected */}
       {selectedCountry && showselectedCountry(selectedCountry)}
     </div>
   )
