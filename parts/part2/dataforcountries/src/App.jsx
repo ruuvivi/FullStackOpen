@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 
 const Button = (props) => { 
-  console.log('Button props value is', props)
   const { handleClick, text } = props;
   return (
     <button onClick={handleClick}>
@@ -18,19 +17,20 @@ const App = () => {
   const [selectedCountry, setSelectedCountry] = useState(null)
   const [weather, setWeather] = useState(null)
 
-  const api_key = '1b27a873b18ac891e1aed48b5cae4d4f' //import.meta.env.VITE_SOME_KEY;
+  const api_key = import.meta.env.VITE_SOME_KEY;
   console.log('api key: ', api_key)
 
   // 1b27a873b18ac891e1aed48b5cae4d4f
 
   const fetchWeather = (capital) => {
+    console.log('api key fetcweather : ', api_key)
     if (capital) {
       axios
         .get(`https://api.openweathermap.org/data/2.5/weather?q=${capital}&units=metric&appid=${api_key}`)
         .then(response => {
           console.log(response.data)
           console.log('api key 2: ', api_key)
-          setWeather(response.data);
+          setWeather(response.data)
         })
   };
   }
@@ -47,19 +47,19 @@ const App = () => {
   }, [selectedCountry]);
 
   useEffect(() => {
+    console.log('effect run, country is now', filteredCountries)
     if (value) {
-      console.log('effect run, country is now', filteredCountries)
-      if (value) {
-        console.log('fetching information...')
-        axios
-        .get(`https://restcountries.com/v3.1/name/${value}`)
-        .then(response => {
-          setInformation(response.data)
-        })
-    } else {
-      setInformation([]) // clear information if no search input
-    }}
-  }, [value])
+      console.log('fetching information...')
+      axios
+      .get(`https://restcountries.com/v3.1/name/${value}`)
+      .then(response => {
+        setInformation(response.data)
+      })
+  } else {
+    setInformation([]) // clear information if no search input
+    setFilteredCountries([])
+  }
+}, [value])
 
   const handleChange = (event) => {
     setValue(event.target.value)
@@ -69,11 +69,12 @@ const App = () => {
 
   const onSearch = (event) => {
     event.preventDefault();
-    setSelectedCountry(null);
-    setWeather(null);
+    setSelectedCountry(country);
+    setWeather(weather);
   }
 
   const queryList = () => {
+    console.log('query', filteredCountries.length)
     if (filteredCountries.length > 10) {
       return <p>Too many matches, specify another filter</p>;
     }
@@ -88,13 +89,17 @@ const App = () => {
           ))}
         </div>
       )
-    } else if (filteredCountries.length === 1) {
-      const country = filteredCountries[0];
-      return showselectedCountry(country);
+    }
+    else if (filteredCountries.length === 1) {
+        const country = filteredCountries[0];
+        if (weather == null) {
+          fetchWeather(country.capital)
+        }
+        return showselectedCountry(country)
     }
   }
 
-  const showselectedCountry = (country, weather) => {
+  const showselectedCountry = (country) => {
     console.log('weather: ', weather)
     return (
       <div>
@@ -116,7 +121,6 @@ const App = () => {
           <div>
             <h3>weather in {country.capital}</h3>
             <p>temperature {weather.main.temp} °C</p>
-            <p> {weather.weather[0].description}</p>
             <p>wind {weather.wind.speed} m/s</p>
             <img
             src={`http://openweathermap.org/img/wn/${weather.weather[0].icon}.png`}
