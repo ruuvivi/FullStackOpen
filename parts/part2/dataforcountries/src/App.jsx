@@ -20,8 +20,6 @@ const App = () => {
   const api_key = import.meta.env.VITE_SOME_KEY;
   console.log('api key: ', api_key)
 
-  // 1b27a873b18ac891e1aed48b5cae4d4f
-
   const fetchWeather = (capital) => {
     console.log('api key fetcweather : ', api_key)
     if (capital) {
@@ -56,14 +54,14 @@ const App = () => {
         setInformation(response.data)
       })
   } else {
-    setInformation([]) // clear information if no search input
+    setInformation([])
     setFilteredCountries([])
   }
 }, [value])
 
   const handleChange = (event) => {
     setValue(event.target.value)
-    setSelectedCountry(null); // Clear the information when input changes
+    setSelectedCountry(null);
     setWeather(null);
   }
 
@@ -117,7 +115,7 @@ const App = () => {
           style={{ width: '200px', height: '200px' }}
         />
         <div>
-        {weather && ( // if weather exists then
+        {weather && (
           <div>
             <h3>weather in {country.capital}</h3>
             <p>temperature {weather.main.temp} °C</p>
